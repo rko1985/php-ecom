@@ -1,4 +1,4 @@
-<?php require_once("../resources/config.php"); ?>
+<?php require_once("config.php"); ?>
 
 <?php 
 
@@ -12,12 +12,12 @@ if(isset($_GET['add'])){
         if($row['product_quantity'] != $_SESSION['product_' . $_GET['add']]){
             
             $_SESSION['product_' . $_GET['add']] += 1; //getting product id added to cart and incremeting quantity by 1
-            redirect("checkout.php");
+            redirect("../public/checkout.php");
 
         } else {
 
             set_message("We only have {$row['product_quantity']} {$row['product_title']}'s available");
-            redirect("checkout.php");
+            redirect("../public/checkout.php");
 
         }
 
@@ -32,11 +32,11 @@ if(isset($_GET['remove'])){
 
         unset($_SESSION['item_total']);
         unset($_SESSION['item_quantity']);
-        redirect("checkout.php");
+        redirect("../public/checkout.php");
 
     } else {
 
-        redirect("checkout.php");
+        redirect("../public/checkout.php");
 
     }
 
@@ -47,7 +47,7 @@ if(isset($_GET['delete'])){
     $_SESSION['product_' . $_GET['delete']] = 0;
     unset($_SESSION['item_total']);
     unset($_SESSION['item_quantity']);
-    redirect("checkout.php");
+    redirect("../public/checkout.php");
 
 }
 
@@ -86,7 +86,7 @@ $product = <<< DELIMETER
     <td>&#36;{$row['product_price']}</td>
     <td>{$value}</td>
     <td>{$sub}</td>
-    <td><a class="btn btn-warning" href="cart.php?remove={$row['product_id']}"><span class='glyphicon glyphicon-minus'></span></a>   <a class="btn btn-success" href="cart.php?add={$row['product_id']}"><span class='glyphicon glyphicon-plus'></span></a>    <a class="btn btn-danger" href="cart.php?delete={$row['product_id']}"><span class='glyphicon glyphicon-remove'></span></a></td>
+    <td><a class="btn btn-warning" href="../resources/cart.php?remove={$row['product_id']}"><span class='glyphicon glyphicon-minus'></span></a>   <a class="btn btn-success" href="../resources/cart.php?add={$row['product_id']}"><span class='glyphicon glyphicon-plus'></span></a>    <a class="btn btn-danger" href="../resources/cart.php?delete={$row['product_id']}"><span class='glyphicon glyphicon-remove'></span></a></td>
 </tr>
 
 <input type="hidden" name="item_name_{$item_name}" value="{$row['product_title']}">
@@ -124,8 +124,11 @@ $_SESSION['item_quantity'] = $item_quantity;
 
 }
 
+
+
+
 function show_paypal(){
-    if(isset($_SESSION['item_quantity'])){
+    if(isset($_SESSION['item_quantity']) && $_SESSION['item_quantity'] >= 1){
 
     $paypal_button = <<<DELIMETER
 
@@ -138,6 +141,81 @@ DELIMETER;
 return $paypal_button;
 
     }
+
+}
+
+
+
+
+
+
+function report(){
+
+if(isset($_GET['tx'])){
+
+global $connection;
+
+$amount = $_GET['amt'];
+$currency = $_GET['cc'];
+$transaction = $_GET['tx'];
+$status = $_GET['st'];
+$total = 0;
+$item_quantity = 0;
+
+foreach($_SESSION as $name => $value){
+
+    if($value > 0){
+        
+        if(substr($name, 0, 8) == "product_"){
+
+            $length = strlen($name) - 8;
+
+            $id = substr($name, 8 , $length);
+
+            $send_order = query("INSERT INTO orders (order_amount, order_transaction, order_status, order_currency) VALUES('{$amount}','{$currency}','{$transaction}','{$status}')");
+            confirm($send_order);
+
+            $last_id = last_id();
+
+
+$query = query("SELECT * FROM products WHERE product_id = " . escape_string($id) . " ");
+confirm($query);
+
+while($row = fetch_array($query)){
+
+$product_price = $row['product_price'];
+$product_title = $row['product_title'];
+$sub = $row['product_price'] * $value;
+$item_quantity += $value;
+
+$insert_report = query("INSERT INTO reports (product_id,  order_id, product_title, product_price, product_quantity) VALUES('{$id}', '{$last_id}', '{$product_title}','{$product_price}','{$value}')");
+confirm($insert_report);
+
+
+
+}
+
+$total += $sub;
+echo $item_quantity;
+
+
+
+    }
+            
+
+    }
+
+    
+}
+
+ session_destroy();
+ 
+} else {
+
+    redirect("index.php");
+
+}
+
 
 }
 
