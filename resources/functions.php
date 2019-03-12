@@ -221,4 +221,58 @@ function send_message(){
 
 // BACK END FUNCTIONS
 
+function display_orders(){
+
+    $query = query("SELECT * FROM orders");
+    confirm($query);
+
+    while($row = fetch_array($query)){
+
+        $orders = <<<DELIMETER
+
+        <tr>
+            <td>{$row['order_id']}</td>
+            <td>{$row['order_amount']}</td>
+            <td>{$row['order_transaction']}</td>
+            <td>{$row['order_currency']}</td>
+            <td>{$row['order_status']}</td>
+            <td><a class="btn btn-danger" href="../../resources/templates/back/delete_order.php?id={$row['order_id']}"><span class="glyphicon glyphicon-remove"></span></a></td>
+        <tr>
+
+DELIMETER;
+
+echo $orders;
+
+    }
+
+}
+
+/*******Admin Products ********/
+
+function get_products_in_admin(){
+
+$query = query("SELECT * FROM products");
+confirm($query);
+
+while($row = fetch_array($query)){
+
+$product = <<<DELIMETER
+
+<tr>
+    <td>{$row['product_id']}</td>
+    <td>{$row['product_title']}<br>
+        <img src="{$row['product_image']}" alt="">
+    </td>
+    <td>Category</td>
+    <td>{$row['product_price']}</td>
+    <td>{$row['product_quantity']}</td>
+</tr>
+DELIMETER;
+
+    echo $product;
+}
+
+}
+
+
 ?>

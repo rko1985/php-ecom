@@ -149,7 +149,7 @@ return $paypal_button;
 
 
 
-function report(){
+function process_transaction(){
 
 if(isset($_GET['tx'])){
 
@@ -172,7 +172,7 @@ foreach($_SESSION as $name => $value){
 
             $id = substr($name, 8 , $length);
 
-            $send_order = query("INSERT INTO orders (order_amount, order_transaction, order_status, order_currency) VALUES('{$amount}','{$currency}','{$transaction}','{$status}')");
+            $send_order = query("INSERT INTO orders (order_amount, order_transaction, order_currency, order_status) VALUES('{$amount}','{$transaction}','{$currency}','{$status}')");
             confirm($send_order);
 
             $last_id = last_id();
@@ -190,8 +190,6 @@ $item_quantity += $value;
 
 $insert_report = query("INSERT INTO reports (product_id,  order_id, product_title, product_price, product_quantity) VALUES('{$id}', '{$last_id}', '{$product_title}','{$product_price}','{$value}')");
 confirm($insert_report);
-
-
 
 }
 
