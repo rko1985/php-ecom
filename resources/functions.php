@@ -70,7 +70,7 @@ function fetch_array($result){
 
 function get_products(){
 
-$query = query("SELECT * FROM products");
+$query = query("SELECT * FROM products WHERE product_quantity >= 1 ");
 confirm($query);
 
 while($row = fetch_array($query)){
@@ -118,7 +118,7 @@ echo $categories_links;
 
 function get_products_in_cat_page(){
 
-$query = query("SELECT * FROM products WHERE product_category_id = " . escape_string($_GET['id']) . " ");
+$query = query("SELECT * FROM products WHERE product_category_id = " . escape_string($_GET['id']) . " AND product_quantity >= 1 ");
 confirm($query);
 
 while($row = fetch_array($query)){
@@ -149,7 +149,7 @@ DELIMETER;
 
 function get_products_in_shop_page(){
 
-$query = query("SELECT * FROM products");
+$query = query("SELECT * FROM products WHERE product_quantity >= 1 ");
 confirm($query);
 
 while($row = fetch_array($query)){
@@ -244,7 +244,7 @@ function display_orders(){
             <td>{$row['order_transaction']}</td>
             <td>{$row['order_currency']}</td>
             <td>{$row['order_status']}</td>
-            <td><a class="btn btn-danger" href="../../resources/templates/back/delete_order.php?id={$row['order_id']}"><span class="glyphicon glyphicon-remove"></span></a></td>
+            <td><a class="btn btn-danger" href="index.php?delete_order_id={$row['order_id']}"><span class="glyphicon glyphicon-remove"></span></a></td>
         <tr>
 
 DELIMETER;
@@ -286,7 +286,7 @@ $product = <<<DELIMETER
     <td>$category</td>
     <td>{$row['product_price']}</td>
     <td>{$row['product_quantity']}</td>
-    <td><a class="btn btn-danger" href="../../resources/templates/back/delete_product.php?id={$row['product_id']}"><span class="glyphicon glyphicon-remove"></span></a></td>
+    <td><a class="btn btn-danger" href="index.php?delete_product_id={$row['product_id']}"><span class="glyphicon glyphicon-remove"></span></a></td>
 </tr>
 DELIMETER;
 
@@ -419,7 +419,7 @@ function show_categories_in_admin(){
         <tr>
             <td>$cat_id</td>
             <td>$cat_title</td>
-            <td><a class="btn btn-danger" href="../../resources/templates/back/delete_category.php?id={$row['cat_id']}"><span class="glyphicon glyphicon-remove"></span></a></td>
+            <td><a class="btn btn-danger" href="index.php?delete_category_id={$row['cat_id']}"><span class="glyphicon glyphicon-remove"></span></a></td>
         </tr>
 
 DELIMETER;
@@ -469,7 +469,7 @@ function display_users(){
             <td>$user_id</td>
             <td>$username</td>
             <td>$email</td>
-            <td><a class="btn btn-danger" href="../../resources/templates/back/delete_user.php?id={$row['user_id']}"><span class="glyphicon glyphicon-remove"></span></a></td>
+            <td><a class="btn btn-danger" href="index.php?delete_user_id={$row['user_id']}"><span class="glyphicon glyphicon-remove"></span></a></td>
         </tr>
 
 DELIMETER;
@@ -516,7 +516,7 @@ $report = <<<DELIMETER
     <td>{$row['product_price']}</td>
     <td>{$row['product_title']}</td>
     <td>{$row['product_quantity']}</td>
-    <td><a class="btn btn-danger" href="../../resources/templates/back/delete_report.php?id={$row['report_id']}"><span class="glyphicon glyphicon-remove"></span></a></td>
+    <td><a class="btn btn-danger" href="index.php?delete_report_id={$row['report_id']}"><span class="glyphicon glyphicon-remove"></span></a></td>
 </tr>
 DELIMETER;
 
