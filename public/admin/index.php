@@ -108,6 +108,12 @@ if(!isset($_SESSION['username'])){
                   include(TEMPLATE_BACK . "/delete_category.php");
 
                }
+
+               if(isset($_GET['slides'])){
+
+                  include(TEMPLATE_BACK . "/slides.php");
+
+               }
                  
 
                  

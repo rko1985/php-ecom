@@ -524,6 +524,88 @@ DELIMETER;
 }
 
 }
+
+/***** SLIDES FUNCTIONS ******/
+
+function add_slides(){
+
+    if(isset($_POST['add_slide'])){
+
+        $slide_title = escape_string($_POST['slide_title']);
+        $slide_image = $_FILES['file']['name'];
+        $slide_image_loc = $_FILES['file']['tmp_name'];
+
+        if(empty($slide_title) || empty($slide_image)){
+
+            echo "<p class='bg-danger'>This field cannot be empty.</p>";
+
+        } else {
+
+            move_uploaded_file($slide_image_loc, UPLOAD_DIRECTORY . DS . $slide_image);
+
+        }
+
+    }
+
+
+}
+
+function get_current_slide(){
+
+}
+
+function get_active_slide(){
+
+    $query = query("SELECT * FROM slides ORDER BY slide_id DESC LIMIT 1");
+    confirm($query);
+
+    while($row = fetch_array($query)){
+
+        $slide_image = display_image($row['slide_image']);
+
+        $slide_active = <<<DELIMETER
+
+        <div class="item active">
+            <img class="slide-image" src="../resources/$slide_image" alt="">
+        </div>
+
+DELIMETER;
+
+        echo $slide_active;
+
+
+    }
+
+}
+
+
+function get_slides(){
+
+    $query = query("SELECT * FROM slides");
+    confirm($query);
+
+    while($row = fetch_array($query)){
+
+        $slide_image = display_image($row['slide_image']);
+
+        $slides = <<<DELIMETER
+
+        <div class="item">
+            <img class="slide-image" src="../resources/$slide_image" alt="">
+        </div>
+
+DELIMETER;
+
+        echo $slides;
+
+
+    }
+
+}
+
+function get_slide_thumbnails(){
+
+}
     
 
 ?>
