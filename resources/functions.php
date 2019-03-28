@@ -542,6 +542,10 @@ function add_slides(){
         } else {
 
             move_uploaded_file($slide_image_loc, UPLOAD_DIRECTORY . DS . $slide_image);
+            $query = query("INSERT INTO slides(slide_title, slide_image) VALUES('{$slide_title}', '{$slide_image}')");
+            confirm($query);
+            set_message("Slide Added");
+            redirect("index.php?slides");
 
         }
 
@@ -550,7 +554,26 @@ function add_slides(){
 
 }
 
-function get_current_slide(){
+function get_current_slide_in_admin(){
+
+    $query = query("SELECT * FROM slides ORDER BY slide_id DESC LIMIT 1");
+    confirm($query);
+
+    while($row = fetch_array($query)){
+
+        $slide_image = display_image($row['slide_image']);
+
+        $slide_active_admin = <<<DELIMETER
+
+        <img class="img-responsive" src="../../resources/$slide_image" alt="">
+
+
+DELIMETER;
+
+        echo $slide_active_admin;
+
+
+    }
 
 }
 
@@ -604,6 +627,37 @@ DELIMETER;
 }
 
 function get_slide_thumbnails(){
+
+    $query = query("SELECT * FROM slides ORDER BY slide_id ASC");
+    confirm($query);
+
+    while($row = fetch_array($query)){
+
+        $slide_image = display_image($row['slide_image']);
+
+        $slide_thumb_admin = <<<DELIMETER
+
+        <div class="col-xs-6 col-md-3 image_container">
+   
+            <a href="index.php?delete_slide_id={$row['slide_id']}">
+            
+                <img class="img-responsive slide_img" src="../../resources/$slide_image" alt="">
+
+            </a>
+
+            <div class="caption">
+
+                <p>{$row['slide_title']}</p>
+
+            </div>
+
+        </div>
+
+DELIMETER;
+
+        echo $slide_thumb_admin;
+
+    }
 
 }
     

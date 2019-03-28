@@ -1,4 +1,4 @@
-#page-wrapper {
+/* #page-wrapper {
   background-color: #F1F1F1 !important;
 }
 
@@ -30,6 +30,16 @@ margin-bottom: 10px;
 #admin_sidebar .btn{
 
 width: 49%;
+
+} */
+
+
+/********* STYLES ADMIN ********/
+
+.slide_img {
+
+  width: 250px;
+  margin-bottom: 10px;
 
 }
 
