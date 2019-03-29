@@ -16,7 +16,7 @@ if(isset($_GET['add'])){
 
         } else {
 
-            set_message("We only have {$row['product_quantity']} {$row['product_title']}'s available");
+            set_message("We only have {$row['product_quantity']} {$row['product_title']}s available");
             redirect("../public/checkout.php");
 
         }
@@ -24,11 +24,11 @@ if(isset($_GET['add'])){
     }
 }
 
-if(isset($_GET['remove'])){
+if(isset($_GET['remove'])) {
 
-    $_SESSION['product_' . $_GET['remove']] --; //subtracting from session quantity
+    $_SESSION['product_' . $_GET['remove']]--; 
 
-    if($_SESSION['product_' . $_GET['add']] < 1){
+    if($_SESSION['product_' . $_GET['remove']] < 1){
 
         unset($_SESSION['item_total']);
         unset($_SESSION['item_quantity']);

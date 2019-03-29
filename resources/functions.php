@@ -73,7 +73,90 @@ function get_products(){
 $query = query("SELECT * FROM products WHERE product_quantity >= 1 ");
 confirm($query);
 
-while($row = fetch_array($query)){
+//pagination 
+$rows = mysqli_num_rows($query);
+
+if(isset($_GET['page'])){
+
+    $page = preg_replace('#[^0-9]#', '', $_GET['page']);
+
+} else {
+
+    $page = 1;
+
+}
+
+$perPage = 3;
+$lastPage = ceil($rows / $perPage);
+
+if($page < 1){
+
+    $page = 1;
+
+} elseif($page > $lastPage){
+
+    $page = $lastPage;
+
+}
+
+$middleNumbers = '';
+$sub1 = $page - 1;
+$sub2 = $page - 2;
+$add1 = $page + 1;
+$add2 = $page + 2;
+
+if($page == 1){
+
+    $middleNumbers .= '<li class="page-item active"><a>' . $page . '</a></li>';
+    $middleNumbers .= '<li class="page-item"><a class="page-link" href="' . $_SERVER['PHP_SELF'] .'?page='. $add1 .'">' . $add1 . '</a></li>';
+
+} elseif($page == $lastPage) {
+
+    $middleNumbers .= '<li class="page-item active"><a>' . $page . '</a></li>';
+    $middleNumbers .= '<li class="page-item"><a class="page-link" href="' . $_SERVER['PHP_SELF'] .'?page='. $sub1 .'">' . $sub1 . '</a></li>';
+
+} elseif($page > 2 && $page < ($lastPage - 1)){
+
+    $middleNumbers .= '<li class="page-item"><a class="page-link" href="' . $_SERVER['PHP_SELF'] .'?page='. $sub2 .'">' . $sub2 . '</a></li>';
+    $middleNumbers .= '<li class="page-item"><a class="page-link" href="' . $_SERVER['PHP_SELF'] .'?page='. $sub1 .'">' . $sub1 . '</a></li>';
+    $middleNumbers .= '<li class="page-item active"><a>' . $page . '</a></li>';
+    $middleNumbers .= '<li class="page-item"><a class="page-link" href="' . $_SERVER['PHP_SELF'] .'?page='. $add1 .'">' . $add1 . '</a></li>';
+    $middleNumbers .= '<li class="page-item"><a class="page-link" href="' . $_SERVER['PHP_SELF'] .'?page='. $add2 .'">' . $add2 . '</a></li>';
+
+    // echo "<ul class='pagination'>$middleNumbers</ul>";
+} elseif($page > 1 && $page < $lastPage){
+
+    $middleNumbers .= '<li class="page-item"><a class="page-link" href="' . $_SERVER['PHP_SELF'] .'?page='. $sub1 .'">' . $sub1 . '</a></li>';
+    $middleNumbers .= '<li class="page-item active"><a>' . $page . '</a></li>';
+    $middleNumbers .= '<li class="page-item"><a class="page-link" href="' . $_SERVER['PHP_SELF'] .'?page='. $add1 .'">' . $add1 . '</a></li>';
+
+    // echo "<ul class='pagination'>$middleNumbers</ul>";
+}
+
+$limit = 'LIMIT ' . ($page - 1) * $perPage . ',' . $perPage;
+
+$query2 = query("SELECT * FROM products $limit");
+confirm($query2);
+
+$outputPagination = "";
+
+if($page != 1){
+
+    $prev = $page -1;
+    $outputPagination .= '<li class="page-item"><a class="page-link" href="' . $_SERVER['PHP_SELF'] .'?page= '. $prev .'">Back</a></li>';
+
+}
+
+$outputPagination .= $middleNumbers;
+
+if($page != $lastPage){
+
+    $next = $page + 1;
+    $outputPagination .= '<li class="page-item"><a class="page-link" href="' . $_SERVER['PHP_SELF'] .'?page= '. $next .'">Next</a></li>';
+
+}
+
+while($row = fetch_array($query2)){
 
 $product_image = display_image($row['product_image']);
 
@@ -81,7 +164,7 @@ $product = <<<DELIMETER
 
 <div class="col-sm-4 col-lg-4 col-md-4">
     <div class="thumbnail">
-        <a href="item.php?id={$row['product_id']}"><img src="../resources/$product_image" alt=""></a>
+        <a href="item.php?id={$row['product_id']}"><img style="height: 90px" src="../resources/$product_image" alt=""></a>
         <div class="caption">
             <h4 class="pull-right">&#36;{$row['product_price']}</h4>
             <h4><a href="item.php?id={$row['product_id']}">{$row['product_title']}</a>
@@ -94,7 +177,10 @@ $product = <<<DELIMETER
 DELIMETER;
 
     echo $product;
-}
+
+    }
+
+    echo "<div class='text-center'><ul class='pagination'>{$outputPagination}</ul></div>";
 
 }
 
